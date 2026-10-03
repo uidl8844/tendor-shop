@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquiditäts- &amp; Machbarkeitsrechner Zwangsversteigerung | Bietvorteil.de</title>
+<meta name="description" content="Kostenlos: Prüfen Sie in 2 Minuten, ob eine Zwangsversteigerung sinnvoll ist. Fix&fertig-Kosten, monatliche Rate bei 12/60/120 Monaten Laufzeit, Liquiditätsplan, Marge — mit CSV-Import und PDF/CSV-Export.">
+<meta name="robots" content="index,follow">
+<style>
+:root{--ink:#17212b;--muted:#5b6773;--line:#d8dee6;--soft:#f5f7fa;--panel:#fff;--accent:#0d5c46;--accent2:#0e7a5f;--gold:#e8b83a;--red:#c0392b;--amber:#d68910}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink);background:linear-gradient(180deg,#f6f9fc,#eef4fb);line-height:1.55}
+nav{background:#0b1622;color:#fff;padding:14px 5%;display:flex;justify-content:space-between;align-items:center}
+nav a{color:#fff;text-decoration:none;font-weight:700;font-size:.95rem}
+nav span{color:#9fb6c9;font-size:.85rem}
+.hero{background:linear-gradient(135deg,#0e2f29 0%,#123830 60%,#0d3559 100%);color:#fff;padding:42px 5% 34px}
+.hero h1{font-size:clamp(1.5rem,3.5vw,2.3rem);letter-spacing:-.4px;max-width:900px}
+.hero p{color:rgba(255,255,255,.8);max-width:820px;margin-top:8px;font-size:.97rem}
+.wrap{max-width:1220px;margin:0 auto;padding:30px 4% 60px;display:grid;grid-template-columns:minmax(320px,1.05fr) minmax(320px,.95fr);gap:22px;align-items:start}
+@media(max-width:940px){.wrap{grid-template-columns:1fr}}
+.karte{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px rgba(11,22,34,.07);padding:22px}
+.karte h2{font-size:1rem;margin-bottom:14px;color:var(--accent)}
+.zeile{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
+.zeile label{font-size:.8rem;font-weight:700;color:var(--muted)}
+.zeile input,.zeile select{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:.95rem;background:#fff}
+.zeile input:focus,.zeile select:focus{outline:2px solid var(--accent2)}
+.reihe2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.laufzeit-btns{display:flex;gap:6px;flex-wrap:wrap}
+.laufzeit-btns button{flex:1;padding:8px 4px;border:1px solid var(--line);background:var(--soft);border-radius:8px;font-weight:800;cursor:pointer;font-size:.85rem}
+.laufzeit-btns button.aktiv{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hinweis{font-size:.74rem;color:var(--muted)}
+.ampel{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;margin-bottom:14px;font-weight:800}
+.ampel.gruen{background:#e7f6ee;color:#116b40;border:1px solid #b9e4cc}
+.ampel.gelb{background:#fdf3dc;color:#8a6100;border:1px solid #f0d9a0}
+.ampel.rot{background:#fdeaea;color:#922b21;border:1px solid #f2c1bd}
+.ampel .punkt{width:16px;height:16px;border-radius:50%}
+.kz{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:.9rem;margin-bottom:14px}
+.kz .k{color:var(--muted)}.kz .w{font-weight:800;text-align:right;white-space:nowrap}
+.kz .w.negativ{color:var(--red)}
+.kz .summe{border-top:2px solid var(--ink);padding-top:6px}
+h3.block{font-size:.85rem;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin:16px 0 8px}
+.plan{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.plan table{width:100%;border-collapse:collapse;font-size:.78rem}
+.plan th{position:sticky;top:0;background:var(--soft);text-align:right;padding:7px 8px;font-size:.72rem;color:var(--muted)}
+.plan th:first-child,.plan td:first-child{text-align:left}
+.plan td{padding:5px 8px;border-top:1px solid #edf1f5;text-align:right;white-space:nowrap}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{padding:10px 15px;border-radius:999px;font-weight:800;font-size:.86rem;cursor:pointer;border:1px solid var(--line);background:var(--soft);color:var(--ink)}
+.btn.primaer{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:hover{filter:brightness(.97)}
+.fuss{max-width:1220px;margin:0 auto;padding:0 4% 50px;font-size:.78rem;color:var(--muted)}
+@media print{
+ nav,.hero,.btns,.karte:first-child h2,.importzeile{display:none!important}
+ body{background:#fff}
+ .wrap{display:block;padding:0}
+ .karte{box-shadow:none;border:none;page-break-inside:avoid}
+ .plan{max-height:none;overflow:visible}
+ .drucktitel{display:block!important;font-size:1.3rem;font-weight:800;margin-bottom:10px}
+}
+.drucktitel{display:none}
+</style>
+</head>
+<body>
+<nav><a href="/">Bietvorteil.de</a><span>Zwangsversteigerungen kompakt</span></nav>
+<section class="hero">
+  <h1>Liquiditäts- &amp; Machbarkeitsrechner</h1>
+  <p>Sofort sehen, ob eine Zwangsversteigerung sich rechnet: Fix&amp;fertig-Kosten, Eigenkapitalbedarf, monatliche Rate und der komplette Liquiditätsplan — rechnet live, läuft ohne Anmeldung.</p>
+</section>
+<div class="wrap">
+  <div class="karte">
+    <h2>Eingaben</h2>
+    <div class="reihe2">
+      <div class="zeile"><label for="objekt">Objekt (frei, nur Beschriftung)</label><input id="objekt" placeholder="z. B. ETW Regensburg, AG Reg. 123/26"></div>
+      <div class="zeile"><label for="bundesland">Bundesland (Grunderwerbsteuer)</label>
+        <select id="bundesland">
+          <option value="3.5">Bayern (3,5 %)</option><option value="3.5">Sachsen (3,5 %)</option>
+          <option value="4.5">Hamburg (4,5 %)</option><option value="5">Baden-Württemberg (5 %)</option>
+          <option value="5">Hessen (5 %)</option><option value="5">Mecklenburg-Vorpommern (5 %)</option>
+          <option value="5">Niedersachsen (5 %)</option><option value="5">Rheinland-Pfalz (5 %)</option>
+          <option value="5">Saarland (5 %)</option><option value="5">Sachsen-Anhalt (5 %)</option>
+          <option value="5">Schleswig-Holstein (5 %)</option><option value="5">Thüringen (5 %)</option>
+          <option value="6">Berlin (6 %)</option><option value="6">Brandenburg (6 %)</option>
+          <option value="6.5">Nordrhein-Westfalen (6,5 %)</option>
+        </select></div>
+    </div>
+    <div class="reihe2">
+      <div class="zeile"><label for="vw">Amtlicher Verkehrswert (€)</label><input id="vw" type="number" min="0" step="1000" value="300000"></div>
+      <div class="zeile"><label for="gebot">Geplanter Zuschlag (€)</label><input id="gebot" type="number" min="0" step="1000" value="210000"></div>
+    </div>
+    <div class="reihe2">
+      <div class="zeile"><label for="sanierung">Renovierung / Sanierung (€)</label><input id="sanierung" type="number" min="0" step="500" value="40000"></div>
+      <div class="zeile"><label for="sonstige">Sonstige Kosten (€)</label><input id="sonstige" type="number" min="0" step="100" value="0"></div>
+    </div>
+    <div class="reihe2">
+      <div class="zeile"><label for="marktwert">Wert nach Sanierung (€)</label><input id="marktwert" type="number" min="0" step="1000" value="300000"></div>
+      <div class="zeile"><label for="makler">Makler bei Verkauf (%)</label><input id="makler" type="number" min="0" max="10" step="0.5" value="0"></div>
+    </div>
+    <h3 class="block">Finanzierung &amp; Liquidität</h3>
+    <div class="reihe2">
+      <div class="zeile"><label for="ek">Eigenkapital verfügbar (€)</label><input id="ek" type="number" min="0" step="1000" value="60000"></div>
+      <div class="zeile"><label for="zins">Zinssatz p.a. (%)</label><input id="zins" type="number" min="0" max="20" step="0.1" value="4.5"></div>
+    </div>
+    <div class="zeile"><label>Laufzeit (Monate)</label>
+      <div class="laufzeit-btns">
+        <button type="button" data-lz="12">12</button>
+        <button type="button" data-lz="60">60</button>
+        <button type="button" data-lz="120" class="aktiv">120</button>
+        <input id="laufzeit" type="number" min="1" max="600" step="1" value="120" style="width:80px;text-align:center">
+      </div>
+    </div>
+    <div class="zeile"><label for="miete">Monatliche Mieteinnahme nach Sanierung (€, optional)</label><input id="miete" type="number" min="0" step="50" value="0"></div>
+    <div class="zeile importzeile"><label for="csv">CSV-Import: Kostenpositionen (Spalten: Position;Betrag — Semikolon oder Komma)</label>
+      <input id="csv" type="file" accept=".csv,.txt">
+      <div class="hinweis">Beispiel: <code>Fenster erneuern;12000</code> — wird zu Renovierung/Sanierung addiert.</div>
+    </div>
+  </div>
+
+  <div class="karte" id="ergebnis">
+    <div class="drucktitel" id="drucktitel">Bietvorteil.de — Machbarkeitsrechnung</div>
+    <div id="ampel" class="ampel gelb"><span class="punkt"></span><span id="ampeltext">…</span></div>
+    <h3 class="block">Fix &amp; fertig — Gesamtkosten</h3>
+    <div class="kz" id="kosten"></div>
+    <h3 class="block">Ergebnis</h3>
+    <div class="kz" id="gewinn"></div>
+    <h3 class="block">Liquidität &amp; Finanzierung</h3>
+    <div class="kz" id="liqui"></div>
+    <h3 class="block">Liquiditätsplan (<span id="lz-ausgabe">120</span> Monate)</h3>
+    <div class="plan"><table id="plantabelle"><thead><tr><th>Monat</th><th>Zins</th><th>Tilgung</th><th>Rate</th><th>Restschuld</th></tr></thead><tbody></tbody></table></div>
+    <div class="btns">
+      <button class="btn primaer" onclick="window.print()">Als PDF drucken/speichern</button>
+      <button class="btn" onclick="exportCsv()">CSV exportieren</button>
+      <button class="btn" onclick="resetAll()">Zurücksetzen</button>
+    </div>
+  </div>
+</div>
+<div class="fuss">
+  <strong>Hinweise:</strong> Unverbindliche Beispielrechnung, keine Rechts- oder Finanzberatung. Gerichtskosten/Notar ca. 2,0 % des Zuschlags, Grunderwerbsteuer nach Bundesland auf den Zuschlagspreis. Bei der Zwangsversteigerung sind i. d. R. 10 % Sicherheitsleistung vorab und der Restkaufpreis binnen 2–4 Wochen nach Zuschlag zu zahlen — die Liquiditätsspitze steht im Plan unter Monat 1. Bietvorteil.de ist nicht an der Finanzierung beteiligt; Konditionen bitte mit Ihrer Bank klären.
+</div>
+<script>
+'use strict';
+const E = id => document.getElementById(id);
+const fmt = n => (n<0?'−':'') + Math.abs(Math.round(n)).toLocaleString('de-DE') + ' €';
+const num = id => { const v = parseFloat(String(E(id).value).replace(/\./g,'').replace(',','.')); return isFinite(v)?v:0; };
+
+document.querySelectorAll('.laufzeit-btns button').forEach(b=>{
+  b.addEventListener('click',()=>{ E('laufzeit').value=b.dataset.lz; markLz(); berechnen(); });
+});
+['vw','gebot','sanierung','sonstige','marktwert','makler','ek','zins','laufzeit','miete','bundesland'].forEach(id=>{
+  E(id).addEventListener('input', berechnen);
+});
+E('csv').addEventListener('change', importCsv);
+E('laufzeit').addEventListener('input', markLz);
+function markLz(){ const v=E('laufzeit').value; document.querySelectorAll('.laufzeit-btns button').forEach(b=>b.classList.toggle('aktiv', b.dataset.lz===v)); }
+
+let csvPositionen = [];
+
+function importCsv(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    let summe = 0, zeilen = 0;
+    r.result.split(/\r?\n/).forEach(z=>{
+      z = z.trim(); if(!z || /^(position|name|titel)\b/i.test(z)) return;
+      const teile = z.split(/[;,\t]/);
+      const betrag = parseFloat((teile[teile.length-1]||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.\-]/g,''));
+      if(isFinite(betrag) && betrag!==0){ csvPositionen.push([teile[0]||'Position', betrag]); summe += betrag; zeilen++; }
+    });
+    if(zeilen){
+      E('sanierung').value = Math.max(0,(num('sanierung')) + Math.round(summe));
+      alert(zeilen + ' Positionen importiert (Summe ' + fmt(summe) + '), zu Renovierung/Sanierung addiert.');
+      berechnen();
+    } else { alert('Keine Beträge erkannt. Erwartet Zeilen wie: Fenster erneuern;12000'); }
+    ev.target.value='';
+  };
+  r.readAsText(f);
+}
+
+function berechnen(){
+  const gebot=num('gebot'), vw=num('vw'), grEstSatz=parseFloat(E('bundesland').value),
+        sanierung=num('sanierung'), sonstige=num('sonstige'), marktwert=num('marktwert'),
+        maklerS=num('makler')/100, ek=num('ek'), zins=num('zins')/100,
+        n=Math.max(1,Math.round(num('laufzeit'))), miete=num('miete');
+  const grEst = gebot*grEstSatz/100, notar = gebot*0.02, sicher = gebot*0.10;
+  const invest = gebot+grEst+notar+sanierung+sonstige;
+  const verkaufsk = marktwert*maklerS;
+  const gewinn = marktwert - invest - verkaufsk;
+  const margenP = invest>0 ? gewinn/invest*100 : 0;
+  const kredit = Math.max(0, invest-ek);
+  const i = zins/12;
+  const rate = i>0 ? kredit*i/(1-Math.pow(1+i,-n)) : kredit/n;
+  const rueck = rate*n, zinsk = rueck-kredit;
+  const rendite = invest>0 ? (miete*12)/invest*100 : 0;
+  const breakeven = (1+grEstSatz/100+0.02) > 0 ? (marktwert - sanierung - sonstige)/(1+grEstSatz/100+0.02+(marktwert>0?maklerS*marktwert/marktwert:0)) : 0;
+
+  E('drucktitel').textContent = 'Bietvorteil.de — Machbarkeitsrechnung' + (E('objekt').value? ': '+E('objekt').value : '');
+  const ampel=E('ampel'), at=E('ampeltext');
+  ampel.className='ampel '+(gewinn>0&&margenP>=15?'gruen':gewinn>0?'gelb':'rot');
+  at.textContent = gewinn>0&&margenP>=15 ? 'Lohnt sich: Gewinn '+fmt(gewinn)+' ('+margenP.toFixed(1)+' % auf die Investition)'
+                 : gewinn>0 ? 'Knapp: Gewinn nur '+fmt(gewinn)+' ('+margenP.toFixed(1)+' %) — verhandeln bzw. Kosten senken'
+                 : 'Unwirtschaftlich: '+fmt(gewinn)+' — Gebot senken oder aussteigen';
+  document.querySelector('#ampel .punkt').style.background = gewinn>0&&margenP>=15?'#1e9e63':gewinn>0?'var(--amber)':'var(--red)';
+
+  E('kosten').innerHTML =
+    row('Geplanter Zuschlag',gebot)+
+    row('Grunderwerbsteuer ('+grEstSatz.toFixed(1).replace('.',',')+' %)',grEst)+
+    row('Notar & Gericht (2,0 %)',notar)+
+    row('Renovierung/Sanierung',sanierung)+
+    row('Sonstige Kosten',sonstige)+
+    rowSum('Fix & fertig gesamt',invest);
+  E('gewinn').innerHTML =
+    row('Wert nach Sanierung',marktwert)+
+    row('Verkaufskosten (Makler '+num('makler').toFixed(1).replace('.',',')+' %)',-verkaufsk)+
+    rowSum('Potenzieller Gewinn (Flip)',gewinn)+
+    row('Marge auf Investition',margenP,false,'%')+
+    row('Kaufpreis-Abstand zum Verkehrswert',vw>0?((gebot/vw-1)*100):0,false,'%')+
+    row('Break-even-Zuschlag (Gewinn = 0)',Math.max(0,breakeven))+
+    row('Bruttomietrendite p.a.',rendite,false,'%');
+  E('liqui').innerHTML =
+    row('Sicherheitsleistung (10 %, vor Zuschlag)',sicher)+
+    row('Restzahlung nach Zuschlag (2–4 Wochen)',invest-sicher)+
+    rowSum('Eigenkapitalbedarf Peak (Monat 1)',invest)+
+    row('Eigenkapital verfügbar',ek)+
+    row('Kreditbedarf',kredit,kredit>ek*4)+
+    row('Monatsrate ('+n+' Monate, '+(zins*100).toFixed(1).replace('.',',')+' % p.a.)',rate)+
+    row('Zinskosten gesamt',zinsk)+
+    row('Monatliche Belastung − Mieteinnahme',rate-miete,rate-miete>miete&&miete>0);
+
+  const tb=E('plantabelle').querySelector('tbody'); tb.innerHTML='';
+  let rest=kredit;
+  for(let m=1;m<=n;m++){
+    const z=rest*i, t=Math.min(rate-z,rest), r=(m===n?z+t:rate); rest=Math.max(0,rest-t);
+    if(n<=24 || m<=6 || m%Math.ceil(n/40)===0 || m===n)
+      tb.insertAdjacentHTML('beforeend','<tr><td>'+m+'</td><td>'+fmt(z)+'</td><td>'+fmt(t)+'</td><td>'+fmt(r)+'</td><td>'+fmt(rest)+'</td></tr>');
+  }
+  if(n>24){ tb.insertAdjacentHTML('beforeend','<tr><td colspan="5" style="text-align:center;color:#8a97a5">… Zwischenmonate ausgeblendet (in CSV vollständig) …</td></tr>'); }
+  E('lz-ausgabe').textContent = n;
+}
+function row(k,w,negativWenn,prozent){
+  const v = prozent!==undefined ? w.toFixed(1).replace('.',',')+' %' : fmt(w);
+  const cls = (prozent===undefined && w<0) || negativWenn ? ' class="negativ"' : '';
+  return '<div class="k">'+k+'</div><div class="w"'+cls+'>'+v+'</div>';
+}
+function rowSum(k,w){ return '<div class="k" style="font-weight:800;border-top:2px solid var(--ink);padding-top:6px">'+k+'</div><div class="w summe" style="font-weight:800">'+fmt(w)+'</div>'; }
+
+function exportCsv(){
+  const L=[];
+  L.push('Bietvorteil.de Liquiditaetsrechner;'+(E('objekt').value||''));
+  L.push(';;');
+  L.push('KOSTEN;Betrag EUR');
+  const k=[]; document.querySelectorAll('#kosten .k').forEach((el,i)=>{ k.push([el.textContent, document.querySelectorAll('#kosten .w')[i].textContent]); });
+  k.forEach(r=>L.push(r[0]+';'+r[1]));
+  L.push(';;'); L.push('ERGEBNIS;Wert');
+  const g=[]; document.querySelectorAll('#gewinn .k').forEach((el,i)=>{ g.push([el.textContent, document.querySelectorAll('#gewinn .w')[i].textContent]); });
+  g.forEach(r=>L.push(r[0]+';'+r[1]));
+  L.push(';;'); L.push('LIQUIDITAET;Wert');
+  const q=[]; document.querySelectorAll('#liqui .k').forEach((el,i)=>{ q.push([el.textContent, document.querySelectorAll('#liqui .w')[i].textContent]); });
+  q.forEach(r=>L.push(r[0]+';'+r[1]));
+  L.push(';;'); L.push('PLAN;Zins EUR;Tilgung EUR;Rate EUR;Restschuld EUR');
+  document.querySelectorAll('#plantabelle tbody tr').forEach(tr=>{
+    const td=tr.querySelectorAll('td'); if(td.length===5) L.push([td[0].textContent,td[1].textContent,td[2].textContent,td[3].textContent,td[4].textContent].join(';'));
+  });
+  const blob=new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='bietvorteil-rechnung-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+}
+function resetAll(){ ['objekt'].forEach(id=>E(id).value=''); csvPositionen=[]; berechnen(); }
+berechnen();
+</script>
+</body>
+</html>
